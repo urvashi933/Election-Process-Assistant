@@ -1,50 +1,21 @@
-"""
-Application entry point for Election Assistant
-"""
+from fastapi import FastAPI
+from app.routes import chat_router, steps_router, timeline_router
 
-import uvicorn
-import logging
-
-from .server import create_app
-from .config import config
-
-# -----------------------------
-# 🧾 LOGGING SETUP
-# -----------------------------
-logging.basicConfig(
-    level=config.LOG_LEVEL,
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+app = FastAPI(
+    title="Indian Election Guide AI",
+    description="Interactive AI Assistant for the Election Commission of India processes.",
+    version="1.0.0"
 )
 
-logger = logging.getLogger(__name__)
+# Include Routers
+app.include_router(chat_router)
+app.include_router(steps_router)
+app.include_router(timeline_router)
 
-# -----------------------------
-# 🚀 CREATE APP
-# -----------------------------
-app = create_app()
-
-
-# -----------------------------
-# ▶️ RUN SERVER
-# -----------------------------
-def run():
-    """Run FastAPI server using config settings"""
-
-    logger.info("Starting Election Assistant server...")
-    logger.info(f"Environment: {config.ENV}")
-    logger.info(f"Mode: {config.DEFAULT_MODE}")
-
-    uvicorn.run(
-        "app.main:app",   # safer import string for reload
-        host="0.0.0.0",
-        port=8000,
-        reload=config.DEBUG,
-        log_level=config.LOG_LEVEL.lower()
-    )
-
-
-# -----------------------------
-# 🧪 OPTIONAL: CLI ENTRY
-# -----------------------------
-if __name__ == "__main__":
-    run()
+@app.get("/")
+async def root():
+    return {
+        "status": "Online",
+        "service": "Indian Election Assistant",
+        "fallback_system": "Active"
+    }
