@@ -1,4 +1,4 @@
-const API_URL = "https://your-vercel-app.vercel.app/api"; // Replace with your actual Vercel URL
+const API_URL = "https://election-process-assistant.vercel.app/api";
 
 // Initialize Lucide Icons
 lucide.createIcons();
