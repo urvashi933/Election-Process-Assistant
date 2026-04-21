@@ -3,100 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Election Guide AI</title>
+    <title>Chunav Guide AI | Indian Election Assistant</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-
 <body>
-    <div class="app-container">
+    <div class="glass-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i data-lucide="vote"></i>
+                <span>Chunav<strong>Guide</strong></span>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" onclick="switchTab('chat')">
+                    <i data-lucide="message-square"></i> AI Assistant
+                </button>
+                <button class="nav-item" onclick="switchTab('timeline')">
+                    <i data-lucide="calendar"></i> Timeline
+                </button>
+                <button class="nav-item" onclick="switchTab('guide')">
+                    <i data-lucide="book-open"></i> Step Guide
+                </button>
+            </nav>
 
-        <!-- 🔷 HEADER -->
-        <header class="topbar">
-            <h1>🇮🇳 Election Guide AI</h1>
-            <p>Understand voting, registration, and election steps easily</p>
-        </header>
+            <div class="status-card">
+                <p>System Status</p>
+                <div class="status-indicator">
+                    <span class="dot"></span> 100% Uptime Active
+                </div>
+            </div>
+        </aside>
 
-        <!-- 🔶 MAIN LAYOUT -->
-        <div class="layout">
+        <main class="content">
+            <header class="top-bar">
+                <h1>Election Assistant</h1>
+                <div class="user-profile">Urvashi</div>
+            </header>
 
-            <!-- 💬 CHAT AREA -->
-            <section class="chat-panel">
-                <div class="chat-box" id="chat-messages">
-
-                    <div class="message assistant">
-                        <div class="message-content">
-                            👋 Hi! I’m your Election Guide.  
-                            I can explain voter registration, voting steps, documents, and election timelines in India.  
-
-                            👉 Choose a mode or ask me anything to begin!
-                        </div>
+            <section id="chat-tab" class="tab-content active">
+                <div class="chat-messages" id="chat-box">
+                    <div class="message ai">
+                        Namaste! I am your <strong>Chunav Guide</strong>. How can I help you participate in the world's largest democracy today?
                     </div>
-
                 </div>
-
-                <!-- ⚡ MODE SWITCH -->
-                <div class="mode-bar">
-                    <button onclick="setMode('guide')">Guide</button>
-                    <button onclick="setMode('timeline')">Timeline</button>
-                    <button onclick="setMode('quiz')">Quiz</button>
-                </div>
-
-                <!-- ✏️ INPUT -->
+                
                 <div class="input-area">
-                    <input 
-                        type="text" 
-                        id="user-input" 
-                        placeholder="Ask about voting, registration, or elections..."
-                        onkeypress="handleKeyPress(event)"
-                    >
-                    <button onclick="sendMessage()">➤</button>
+                    <input type="text" id="user-input" placeholder="Ask about Voter ID, Booths, or Dates...">
+                    <button id="send-btn"><i data-lucide="send"></i></button>
                 </div>
             </section>
 
-            <!-- 📊 SIDEBAR -->
-            <aside class="side-panel">
-
-                <!-- 💡 QUICK ACTIONS -->
-                <div class="card">
-                    <h3>Quick Start</h3>
-
-                    <button onclick="useSuggestion('How do I register to vote in India?')">
-                        Register to Vote
-                    </button>
-
-                    <button onclick="useSuggestion('How does voting work with EVM?')">
-                        Voting Process
-                    </button>
-
-                    <button onclick="useSuggestion('What documents do I need to vote?')">
-                        Required Documents
-                    </button>
-
-                    <button onclick="useSuggestion('Explain election timeline in India')">
-                        Election Timeline
-                    </button>
-                </div>
-
-                <!-- 📚 SOURCES -->
-                <div class="card" id="sources-container" style="display:none;">
-                    <h3>Sources</h3>
-                    <ul id="sources-list"></ul>
-                </div>
-
-                <!-- 🧭 HELP -->
-                <div class="card">
-                    <h3>What I Can Do</h3>
-                    <ul>
-                        <li>✔ Step-by-step voting guide</li>
-                        <li>✔ Election timelines</li>
-                        <li>✔ ID & eligibility help</li>
-                        <li>✔ Interactive quizzes</li>
-                    </ul>
-                </div>
-
-            </aside>
-
-        </div>
+            <section id="timeline-tab" class="tab-content">
+                <div class="timeline-container" id="timeline-list">
+                    </div>
+            </section>
+        </main>
     </div>
 
     <script src="/static/script.js"></script>
