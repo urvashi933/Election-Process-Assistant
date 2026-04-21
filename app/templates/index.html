@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Guide AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- 🔷 HEADER -->
+        <header class="topbar">
+            <h1>🇮🇳 Election Guide AI</h1>
+            <p>Understand voting, registration, and election steps easily</p>
+        </header>
+
+        <!-- 🔶 MAIN LAYOUT -->
+        <div class="layout">
+
+            <!-- 💬 CHAT AREA -->
+            <section class="chat-panel">
+                <div class="chat-box" id="chat-messages">
+
+                    <div class="message assistant">
+                        <div class="message-content">
+                            👋 Hi! I’m your Election Guide.  
+                            I can explain voter registration, voting steps, documents, and election timelines in India.  
+
+                            👉 Choose a mode or ask me anything to begin!
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ⚡ MODE SWITCH -->
+                <div class="mode-bar">
+                    <button onclick="setMode('guide')">Guide</button>
+                    <button onclick="setMode('timeline')">Timeline</button>
+                    <button onclick="setMode('quiz')">Quiz</button>
+                </div>
+
+                <!-- ✏️ INPUT -->
+                <div class="input-area">
+                    <input 
+                        type="text" 
+                        id="user-input" 
+                        placeholder="Ask about voting, registration, or elections..."
+                        onkeypress="handleKeyPress(event)"
+                    >
+                    <button onclick="sendMessage()">➤</button>
+                </div>
+            </section>
+
+            <!-- 📊 SIDEBAR -->
+            <aside class="side-panel">
+
+                <!-- 💡 QUICK ACTIONS -->
+                <div class="card">
+                    <h3>Quick Start</h3>
+
+                    <button onclick="useSuggestion('How do I register to vote in India?')">
+                        Register to Vote
+                    </button>
+
+                    <button onclick="useSuggestion('How does voting work with EVM?')">
+                        Voting Process
+                    </button>
+
+                    <button onclick="useSuggestion('What documents do I need to vote?')">
+                        Required Documents
+                    </button>
+
+                    <button onclick="useSuggestion('Explain election timeline in India')">
+                        Election Timeline
+                    </button>
+                </div>
+
+                <!-- 📚 SOURCES -->
+                <div class="card" id="sources-container" style="display:none;">
+                    <h3>Sources</h3>
+                    <ul id="sources-list"></ul>
+                </div>
+
+                <!-- 🧭 HELP -->
+                <div class="card">
+                    <h3>What I Can Do</h3>
+                    <ul>
+                        <li>✔ Step-by-step voting guide</li>
+                        <li>✔ Election timelines</li>
+                        <li>✔ ID & eligibility help</li>
+                        <li>✔ Interactive quizzes</li>
+                    </ul>
+                </div>
+
+            </aside>
+
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
