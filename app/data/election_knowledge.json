@@ -1,33 +1,73 @@
 {
   "registration": {
     "description": "Voter registration in India is the process of getting your name included in the Electoral Roll.",
-    "qualifying_dates": ["January 1st", "April 1st", "July 1st", "October 1st"],
+    "qualifying_dates": [
+      "January 1st", 
+      "April 1st", 
+      "July 1st", 
+      "October 1st"
+    ],
     "methods": [
       "Online: Voters' Service Portal (voters.eci.gov.in)",
-      "Mobile: Voter Helpline App",
-      "Offline: Booth Level Officer (BLO) via Form 6"
+      "Mobile: Voter Helpline App (Android/iOS)",
+      "Offline: Through your local Booth Level Officer (BLO)"
     ],
-    "requirements": ["Indian citizen", "18+ years old", "Resident of the constituency"],
+    "requirements": [
+      "Must be an Indian citizen", 
+      "Must be 18+ years old on the qualifying date", 
+      "Must be an ordinary resident of the constituency"
+    ],
     "forms": {
       "Form 6": "New Voter Registration",
-      "Form 8": "Correction/Shifting/Replacement of EPIC"
+      "Form 6A": "Inclusion of name for Overseas (NRI) Electors",
+      "Form 7": "Objection to inclusion or deletion of name",
+      "Form 8": "Correction of entries, shifting of residence, or replacement of EPIC"
     }
   },
   "timeline": [
-    {"event": "Electoral Roll Revision", "description": "Updating voter lists before elections"},
-    {"event": "Election Announcement", "description": "ECI announces the schedule and Phase dates"},
-    {"event": "Nomination Filing", "description": "Candidates submit papers to the Returning Officer"},
-    {"event": "Campaign Period", "description": "Ends 48 hours before the close of poll (Silence Period)"},
-    {"event": "Polling Day", "description": "Voting via EVM and VVPAT"},
-    {"event": "Counting Day", "description": "Votes are tallied and results declared"}
+    {
+      "event": "Electoral Roll Revision", 
+      "description": "The ECI updates and publishes the final list of eligible voters before the elections."
+    },
+    {
+      "event": "Election Notification", 
+      "description": "The official announcement of the election schedule, including dates for various voting phases."
+    },
+    {
+      "event": "Nomination Phase", 
+      "description": "Candidates file their nomination papers (Parchcha) with the Returning Officer."
+    },
+    {
+      "event": "Campaign Period", 
+      "description": "Political parties hold rallies and public meetings. This strictly ends 48 hours before the close of polls (the Silence Period)."
+    },
+    {
+      "event": "Polling Day", 
+      "description": "Voters visit assigned booths and cast their ballots using Electronic Voting Machines (EVMs)."
+    },
+    {
+      "event": "Counting Day", 
+      "description": "EVMs are unsealed under heavy security, votes are tallied, and the final results (Nateeja) are declared."
+    }
   ],
   "voting": {
-    "in_person": "Primary method using Electronic Voting Machines (EVM)",
-    "postal_ballot": "Available for 80+ seniors, PwD, and essential service voters",
-    "vvpat": "Voter Verifiable Paper Audit Trail slip is visible for 7 seconds"
+    "description": "Casting your vote securely at your assigned polling booth.",
+    "in_person": "The primary method for all citizens using Electronic Voting Machines (EVM).",
+    "postal_ballot": "A special facility available only for 80+ senior citizens, Persons with Disabilities (PwD), and essential service/armed forces voters.",
+    "vvpat": "Voter Verifiable Paper Audit Trail. After pressing the EVM button, a printed slip showing your candidate's symbol is visible behind a glass window for 7 seconds to verify your vote."
   },
   "documents": {
-    "primary": "EPIC (Voter ID Card) or e-EPIC",
-    "alternatives": ["Aadhaar Card", "PAN Card", "Driving License", "Passport", "MNREGA Job Card", "Bank Passbook with Photo"]
+    "description": "Valid identification required to cast your vote at the polling booth.",
+    "primary": "EPIC (Electors Photo Identity Card) or the digital e-EPIC.",
+    "alternatives": [
+      "Aadhaar Card", 
+      "PAN Card", 
+      "Driving License", 
+      "Indian Passport", 
+      "MNREGA Job Card", 
+      "Passbook with photograph issued by Bank/Post Office",
+      "Smart Card issued by RGI under NPR",
+      "Health Insurance Smart Card issued under the scheme of Ministry of Labour"
+    ]
   }
 }
