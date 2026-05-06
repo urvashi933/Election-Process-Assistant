@@ -1,73 +1,164 @@
+<<<<<<< HEAD
+// Configuration: Use relative paths so it works on any host (Vercel, Docker, Local)
+const API_BASE = "/api";
+=======
 const API_URL = "https://election-process-assistant.vercel.app/api";
+>>>>>>> f7f47d9e9034be66f53bdbff7db0a6c59a84345f
 
 // Initialize Lucide Icons
 lucide.createIcons();
 
-// Tab Switching Logic
+/**
+ * Tab Switching Logic with Accessibility Support
+ */
 function switchTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    // 1. Hide all sections
+    document.querySelectorAll('.tab-content').forEach(t => {
+        t.classList.remove('active');
+        t.style.display = 'none';
+        t.setAttribute('aria-hidden', 'true');
+    });
     
-    document.getElementById(`${tabName}-tab`).classList.add('active');
-    event.currentTarget.classList.add('active');
+    // 2. Deactivate all buttons
+    document.querySelectorAll('.nav-item').forEach(n => {
+        n.classList.remove('active');
+        n.removeAttribute('aria-current');
+    });
+    
+    // 3. Activate target section
+    const targetTab = document.getElementById(`${tabName}-tab`);
+    if (targetTab) {
+        targetTab.classList.add('active');
+        targetTab.style.display = 'flex';
+        targetTab.setAttribute('aria-hidden', 'false');
+    }
+    
+    // 4. Activate clicked button
+    const activeBtn = document.querySelector(`button[onclick*="'${tabName}'"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.setAttribute('aria-current', 'page');
+    }
 
+    // 5. Special load triggers
     if (tabName === 'timeline') loadTimeline();
+    
+    // 6. Refresh icons
+    lucide.createIcons();
 }
 
-// Chat Functionality
+/**
+ * Chat Functionality with Loading States
+ */
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
+const chatForm = document.getElementById('chat-form');
 
 async function sendMessage() {
     const text = userInput.value.trim();
-    if (!text) return;
+    if (!text || sendBtn.disabled) return;
+
+    // Toggle loading state
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i data-lucide="loader" class="spin"></i>';
+    lucide.createIcons();
 
     // Append User Message
     appendMessage(text, 'user');
     userInput.value = '';
 
     try {
-        const response = await fetch(`${API_URL}/chat`, {
+        const response = await fetch(`${API_BASE}/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: text })
+            body: JSON.stringify({ message: text, session_id: "user_123" })
         });
         
         const result = await response.json();
-        appendMessage(result.data.response, 'ai');
+        
+        if (result.success) {
+            appendMessage(result.data.response, 'ai');
+            // If there is structured data, we could render it here too
+        } else {
+            appendMessage("I'm sorry, I couldn't process that. " + (result.error || ""), 'ai');
+        }
     } catch (error) {
-        appendMessage("Connection error. Check if backend is running!", 'ai');
+        console.error("Chat error:", error);
+        appendMessage("Namaste! I'm having trouble connecting to my knowledge base. Is your internet active?", 'ai');
+    } finally {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i data-lucide="send"></i>';
+        lucide.createIcons();
+        userInput.focus();
     }
 }
 
 function appendMessage(text, sender) {
     const div = document.createElement('div');
     div.className = `message ${sender}`;
-    div.innerHTML = text.replace(/\n/g, '<br>');
+    div.setAttribute('role', 'article');
+    
+    // Convert newlines and simple markdown-like bolding for the UI
+    let formattedText = text.replace(/\n/g, '<br>');
+    formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    div.innerHTML = formattedText;
     chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    
+    // Smooth scroll to bottom
+    chatBox.scrollTo({
+        top: chatBox.scrollHeight,
+        behavior: 'smooth'
+    });
 }
 
-// Load Timeline from API
+/**
+ * Timeline Loader with Professional Cards
+ */
 async function loadTimeline() {
     const container = document.getElementById('timeline-list');
-    container.innerHTML = "Loading timeline...";
+    container.innerHTML = '<div class="loading">Fetching official ECI timeline...</div>';
     
     try {
-        const response = await fetch(`${API_URL}/timeline`);
+        const response = await fetch(`${API_BASE}/timeline`);
         const result = await response.json();
         
-        container.innerHTML = result.data.map(item => `
-            <div class="timeline-item">
-                <h3>${item.event}</h3>
-                <p>${item.description}</p>
-            </div>
-        `).join('');
+        if (result.success && result.data) {
+            container.innerHTML = result.data.map(item => `
+                <div class="timeline-card" role="listitem">
+                    <div class="timeline-date">${item.date || 'Upcoming'}</div>
+                    <h3>${item.event}</h3>
+                    <p>${item.description}</p>
+                </div>
+            `).join('');
+        }
     } catch (error) {
-        container.innerHTML = "Failed to load timeline.";
+        container.innerHTML = '<div class="error">Failed to load timeline data.</div>';
     }
 }
 
+<<<<<<< HEAD
+// Event Listeners
+if (chatForm) {
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        sendMessage();
+    });
+}
+
+userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+// Initialize first tab
+document.addEventListener('DOMContentLoaded', () => {
+    switchTab('chat');
+});
+=======
 sendBtn.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+>>>>>>> f7f47d9e9034be66f53bdbff7db0a6c59a84345f

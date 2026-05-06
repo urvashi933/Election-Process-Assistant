@@ -1,15 +1,16 @@
 """
-Validation functionality for user inputs
+Validation and Sanitization functionality for user inputs.
+Enhanced with security patterns and HTML stripping.
 """
 
 import re
-
+import bleach
+from typing import Optional
 
 def is_valid_input(text: str) -> bool:
     """
-    Validate user input for safety and usability
+    Validate user input for safety and usability.
     """
-
     if not text:
         return False
 
@@ -17,24 +18,28 @@ def is_valid_input(text: str) -> bool:
     text = text.strip()
 
     # Length check
-    if len(text) < 3 or len(text) > 500:
+    if len(text) < 2 or len(text) > 1000:
         return False
 
     # Reject excessive repetition (e.g., "aaaaaaa", "??????")
-    if re.search(r"(.)\1{6,}", text):
+    if re.search(r"(.)\1{10,}", text):
         return False
 
     # Reject inputs with only symbols
     if re.fullmatch(r"[\W_]+", text):
         return False
 
-    # Basic prompt injection / suspicious patterns
+    # Advanced prompt injection / suspicious patterns
     blocked_patterns = [
         "ignore previous instructions",
         "system prompt",
-        "act as",
+        "act as a",
         "bypass",
-        "jailbreak"
+        "jailbreak",
+        "<script>",
+        "javascript:",
+        "onload=",
+        "onerror="
     ]
 
     text_lower = text.lower()
@@ -46,11 +51,14 @@ def is_valid_input(text: str) -> bool:
 
 def sanitize_input(text: str) -> str:
     """
-    Clean user input before processing
+    Clean user input before processing.
+    Uses bleach to strip HTML and normalize whitespace.
     """
-
     if not text:
         return ""
+
+    # Strip any HTML tags for security (XSS prevention)
+    text = bleach.clean(text, tags=[], attributes={}, strip=True)
 
     # Normalize whitespace
     text = re.sub(r"\s+", " ", text)

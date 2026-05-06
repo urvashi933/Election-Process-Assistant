@@ -14,8 +14,11 @@ class Config:
 # 1. Initialize the config object FIRST
 config = Config()
 
-# 2. THEN use it for logging
+# Initialize logging configuration based on the environment variable
 logging.basicConfig(
     level=getattr(logging, config.LOG_LEVEL.upper(), logging.INFO),
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
+
+# Export an instance of the config to be used across the app
+config = Config()

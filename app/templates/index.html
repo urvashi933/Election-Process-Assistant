@@ -3,64 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chunav Guide AI - Your personal AI assistant for Indian Election Commission processes. Learn how to register, vote, and participate in democracy.">
     <title>Chunav Guide AI | Indian Election Assistant</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
     <div class="glass-container">
-        <aside class="sidebar">
-            <div class="logo">
-                <i data-lucide="vote"></i>
+        <aside class="sidebar" role="complementary" aria-label="Navigation Sidebar">
+            <div class="logo" aria-label="Chunav Guide Logo">
+                <i data-lucide="vote" aria-hidden="true"></i>
                 <span>Chunav<strong>Guide</strong></span>
             </div>
             
-            <nav class="nav-menu">
-                <button class="nav-item active" onclick="switchTab('chat')">
-                    <i data-lucide="message-square"></i> AI Assistant
-                </button>
-                <button class="nav-item" onclick="switchTab('timeline')">
-                    <i data-lucide="calendar"></i> Timeline
-                </button>
-                <button class="nav-item" onclick="switchTab('guide')">
-                    <i data-lucide="book-open"></i> Step Guide
-                </button>
+            <nav class="nav-menu" aria-label="Main Navigation">
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    <li>
+                        <button class="nav-item active" onclick="switchTab('chat')" aria-current="page" aria-label="Switch to AI Assistant tab">
+                            <i data-lucide="message-square" aria-hidden="true"></i> <span>AI Assistant</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item" onclick="switchTab('timeline')" aria-label="Switch to Timeline tab">
+                            <i data-lucide="calendar" aria-hidden="true"></i> <span>Timeline</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item" onclick="switchTab('guide')" aria-label="Switch to Step Guide tab">
+                            <i data-lucide="book-open" aria-hidden="true"></i> <span>Step Guide</span>
+                        </button>
+                    </li>
+                </ul>
             </nav>
 
-            <div class="status-card">
+            <div class="status-card" role="status">
                 <p>System Status</p>
                 <div class="status-indicator">
-                    <span class="dot"></span> 100% Uptime Active
+                    <span class="dot" aria-hidden="true"></span> <span>100% Uptime Active</span>
                 </div>
             </div>
         </aside>
 
-        <main class="content">
+        <main class="content" id="main-content" role="main">
             <header class="top-bar">
                 <h1>Election Assistant</h1>
-                <div class="user-profile">Urvashi</div>
+                <div class="user-profile" aria-label="User Profile">Urvashi</div>
             </header>
 
-            <section id="chat-tab" class="tab-content active">
-                <div class="chat-messages" id="chat-box">
+            <section id="chat-tab" class="tab-content active" aria-labelledby="chat-heading">
+                <h2 id="chat-heading" class="sr-only">AI Chat Assistant</h2>
+                <div class="chat-messages" id="chat-box" role="log" aria-live="polite">
                     <div class="message ai">
-                        Namaste! I am your <strong>Chunav Guide</strong>. How can I help you participate in the world's largest democracy today?
+                        <p>Namaste! I am your <strong>Chunav Guide</strong>. How can I help you participate in the world's largest democracy today?</p>
                     </div>
                 </div>
                 
-                <div class="input-area">
-                    <input type="text" id="user-input" placeholder="Ask about Voter ID, Booths, or Dates...">
-                    <button id="send-btn"><i data-lucide="send"></i></button>
+                <form class="input-area" id="chat-form" onsubmit="event.preventDefault(); return false;">
+                    <label for="user-input" class="sr-only">Ask a question about elections</label>
+                    <input type="text" id="user-input" placeholder="Ask about Voter ID, Booths, or Dates..." aria-required="true">
+                    <button id="send-btn" type="submit" aria-label="Send message">
+                        <i data-lucide="send" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </section>
+
+            <section id="timeline-tab" class="tab-content" aria-labelledby="timeline-heading" style="display: none;">
+                <h2 id="timeline-heading" class="sr-only">Election Timeline</h2>
+                <div class="timeline-container" id="timeline-list">
                 </div>
             </section>
 
-            <section id="timeline-tab" class="tab-content">
-                <div class="timeline-container" id="timeline-list">
-                    </div>
+            <section id="guide-tab" class="tab-content" aria-labelledby="guide-heading" style="display: none;">
+                <h2 id="guide-heading" class="sr-only">Step Guide</h2>
+                <div class="guide-container" id="guide-list">
+                </div>
             </section>
         </main>
     </div>
 
     <script src="/static/script.js"></script>
+    <script>
+        // Refresh icons
+        lucide.createIcons();
+    </script>
 </body>
 </html>

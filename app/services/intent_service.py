@@ -13,26 +13,26 @@ class IntentService:
         self.keyword_map = {
             "registration": [
                 "register", "registration", "voter id", "epic", "enroll", 
-                "nvsp", "form 6", "apply", "new voter", "add name"
+                "nvsp", "form 6", "apply", "new voter", "add name", "naam", "parchi"
             ],
             "timeline": [
                 "date", "when", "schedule", "timeline", "phase", 
-                "chunav kab", "election dates", "month"
+                "chunav kab", "election dates", "month", "tarikh", "din"
             ],
             "voting": [
                 "vote", "voting", "evm", "how to vote", "cast", 
-                "vvpat", "process", "matdaan", "button"
+                "vvpat", "process", "matdaan", "button", "nishan", "ungli", "ink"
             ],
             "documents": [
                 "id", "document", "aadhaar", "passport", "driving license", 
-                "pan", "proof", "kagaz", "mnrega", "passbook"
+                "pan", "proof", "kagaz", "mnrega", "passbook", "pahchan", "card"
             ],
             "polling": [
                 "where", "polling booth", "polling station", "location", 
-                "booth", "center", "kahan", "find"
+                "booth", "center", "kahan", "find", "pata", "jagah"
             ],
             "results": [
-                "result", "counting", "winner", "who won", "nateeja", "jeeta"
+                "result", "counting", "winner", "who won", "nateeja", "jeeta", "parinam"
             ]
         }
 
