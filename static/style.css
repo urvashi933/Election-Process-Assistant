@@ -539,11 +539,27 @@ button#send-btn:disabled {
    🗳️ STEP CHECKLIST COMPONENT (Interactive Step Guides)
    ========================================================================== */
 .guide-container {
+    flex: 1;
+    min-height: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-auto-rows: max-content;
     gap: 1.5rem;
     overflow-y: auto;
     padding-right: 8px;
+}
+
+.guide-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.guide-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+
+.guide-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .guide-card {
@@ -744,12 +760,27 @@ button#send-btn:disabled {
    📍 GLOWING VERTICAL TIMELINE
    ========================================================================== */
 .timeline-container {
+    flex: 1;
+    min-height: 0;
     position: relative;
     padding: 1.5rem 0 1.5rem 2rem;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+.timeline-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.timeline-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+
+.timeline-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* Vertical glowing track */
