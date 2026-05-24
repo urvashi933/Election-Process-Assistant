@@ -88,7 +88,72 @@ class AssistantService:
         The safety net. If Gemini is down, rate-limited, or unconfigured,
         this ensures the user still gets a perfectly accurate, helpful answer.
         """
-        if "description" in context:
-            return f"I am currently operating in offline mode. Regarding {intent}: {context['description']} Please visit voters.eci.gov.in for full, official details."
+        # Determine if the matched intent is supported by local knowledge base
+        is_supported = intent in self.knowledge and intent not in ["general", "results", "polling"]
         
-        return "I am currently in offline mode and couldn't find specific details for that. Please visit the official Voters' Service Portal at voters.eci.gov.in for all Election Commission of India services."
+        response_parts = []
+        
+        # Saffron colored heading for a premium offline civic look
+        response_parts.append(f"### 🇮🇳 Chunav Guide (Offline Mode - {intent.capitalize()})")
+        
+        if not is_supported:
+            response_parts.append("I am currently operating in offline mode. Please feel free to ask me about any of the following official topics to get detailed step-by-step guidance:")
+            response_parts.append("- **Voter Registration**: Ask about how to apply, eligibility, Forms 6, 7, 8, etc.")
+            response_parts.append("- **Election Timeline**: Ask about dates, campaign schedules, polling and counting phases.")
+            response_parts.append("- **Voting Process**: Ask about EVMs, VVPAT verification, and casting your vote.")
+            response_parts.append("- **Required ID Documents**: Ask about acceptable identity proofs to bring to the polling booth.")
+            response_parts.append("\n*You can also switch to the 'Timeline', 'Step Guide', or 'Chunav Quiz' tabs in the sidebar for direct, interactive tools.*")
+            return "\n".join(response_parts)
+
+        # Retrieve direct knowledge config
+        local_context = self.knowledge.get(intent, {})
+        
+        if "description" in local_context:
+            response_parts.append(local_context["description"])
+            
+        # Format registration details
+        if intent == "registration":
+            if "requirements" in local_context:
+                response_parts.append("\n**📋 Requirements to Register:**")
+                for req in local_context["requirements"]:
+                    response_parts.append(f"- {req}")
+            if "qualifying_dates" in local_context:
+                response_parts.append("\n**📅 Qualifying Dates (for 18+ eligibility):**")
+                for qdate in local_context["qualifying_dates"]:
+                    response_parts.append(f"- {qdate}")
+            if "methods" in local_context:
+                response_parts.append("\n**💻 Methods to Apply:**")
+                for method in local_context["methods"]:
+                    response_parts.append(f"- {method}")
+            if "forms" in local_context:
+                response_parts.append("\n**📝 Important Registration Forms:**")
+                for form, desc in local_context["forms"].items():
+                    response_parts.append(f"- **{form}**: {desc}")
+                    
+        # Format voting details
+        elif intent == "voting":
+            if "in_person" in local_context:
+                response_parts.append(f"\n**🗳️ Voting In-Person:**\n{local_context['in_person']}")
+            if "postal_ballot" in local_context:
+                response_parts.append(f"\n**📬 Postal Ballot:**\n{local_context['postal_ballot']}")
+            if "vvpat" in local_context:
+                response_parts.append(f"\n**🤖 EVM & VVPAT Verification:**\n{local_context['vvpat']}")
+                
+        # Format document details
+        elif intent == "documents":
+            if "primary" in local_context:
+                response_parts.append(f"\n**🆔 Primary ID:**\n- {local_context['primary']}")
+            if "alternatives" in local_context:
+                response_parts.append("\n**Alternative Valid ID Documents (if EPIC is unavailable):**")
+                for doc in local_context["alternatives"]:
+                    response_parts.append(f"- {doc}")
+
+        # Format timeline details
+        elif intent == "timeline":
+            response_parts.append("\n**📅 Election Phases & Milestones:**")
+            timeline_data = self.knowledge.get("timeline", [])
+            for phase, item in enumerate(timeline_data, 1):
+                response_parts.append(f"{phase}. **{item['event']}**: {item['description']}")
+
+        response_parts.append("\n*Note: Operating in offline mode with pre-loaded official Election Commission of India guidelines.*")
+        return "\n".join(response_parts)

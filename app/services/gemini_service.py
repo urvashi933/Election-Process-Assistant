@@ -64,4 +64,4 @@ class GeminiService:
             return response.text.strip() if response.text else "I'm having trouble thinking right now."
         except Exception as e:
             logger.error(f"Gemini Error: {e}")
-            return "Namaste! I hit a snag. Please visit voters.eci.gov.in for direct info."
+            raise e
