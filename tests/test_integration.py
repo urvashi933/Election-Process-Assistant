@@ -12,3 +12,9 @@ def test_intent_classification():
     
     # Test fallback
     assert service.classify("Tell me a joke") == "general"
+
+def test_root_endpoint(client):
+    """Test that the root endpoint serves the index page successfully."""
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "text/html" in response.headers["content-type"]

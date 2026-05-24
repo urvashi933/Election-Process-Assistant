@@ -80,7 +80,7 @@ async def read_root(request: Request):
     """
     Serves the main interactive 'Chunav Guide' interface.
     """
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 # 8. Health Check / Status Endpoint
 @app.get("/api/health", tags=["system"])
