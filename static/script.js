@@ -530,11 +530,81 @@ const quizQuestions = [
     }
 ];
 
-let quizState = {
+// Persistent Quiz State with LocalStorage
+let quizState = JSON.parse(localStorage.getItem('chunav_quiz_state')) || {
     currentQuestionIndex: 0,
     score: 0,
     answers: []
 };
+
+/**
+ * Renders the feedback HTML block cleanly
+ */
+function renderFeedbackHTML(isCorrect, explanation) {
+    return `
+        <div style="background:rgba(255,255,255,0.03); border:1px solid ${isCorrect ? 'var(--green)' : 'rgba(239, 68, 68, 0.4)'}; padding:15px; border-radius:16px; margin-bottom:12px;">
+            <div style="color:${isCorrect ? 'var(--green)' : '#ef4444'}; font-weight:700; font-size:0.95rem; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+                <i data-lucide="${isCorrect ? 'check-circle-2' : 'alert-circle'}"></i>
+                ${isCorrect ? 'Correct Answer! Excellent!' : 'Oops, that is incorrect.'}
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">${explanation}</p>
+        </div>
+        <button class="quiz-btn" style="width:100%" onclick="nextQuizQuestion()">
+            ${quizState.currentQuestionIndex + 1 === quizQuestions.length ? 'View Final Results 🏆' : 'Next Question ➡️'}
+        </button>
+    `;
+}
+
+/**
+ * Displays a premium micro-animated toast notification on selection
+ */
+function showQuizToast(message, isCorrect) {
+    const tab = document.getElementById('quiz-tab');
+    if (!tab) return;
+    
+    const oldToast = document.getElementById('quiz-toast');
+    if (oldToast) oldToast.remove();
+    
+    const toast = document.createElement('div');
+    toast.id = 'quiz-toast';
+    toast.style.position = 'absolute';
+    toast.style.top = '24px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%) translateY(-20px)';
+    toast.style.padding = '12px 24px';
+    toast.style.borderRadius = '16px';
+    toast.style.backdropFilter = 'blur(15px)';
+    toast.style.border = isCorrect ? '1px solid var(--green)' : '1px solid #ef4444';
+    toast.style.background = isCorrect ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)';
+    toast.style.boxShadow = isCorrect ? '0 8px 32px var(--green-glow)' : '0 8px 32px rgba(239, 68, 68, 0.2)';
+    toast.style.color = '#ffffff';
+    toast.style.zIndex = '100';
+    toast.style.display = 'flex';
+    toast.style.alignItems = 'center';
+    toast.style.gap = '10px';
+    toast.style.fontWeight = '600';
+    toast.style.fontSize = '0.95rem';
+    toast.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    toast.style.opacity = '0';
+    
+    toast.innerHTML = isCorrect 
+        ? `<i data-lucide="check-circle-2" style="color:var(--green); width:20px; height:20px;"></i> ${message}`
+        : `<i data-lucide="alert-circle" style="color:#ef4444; width:20px; height:20px;"></i> ${message}`;
+        
+    tab.appendChild(toast);
+    lucide.createIcons();
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        toast.style.opacity = '1';
+    }, 10);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(-20px)';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 400);
+    }, 2500);
+}
 
 function loadQuiz() {
     const box = document.getElementById('quiz-box');
@@ -547,31 +617,64 @@ function loadQuiz() {
     }
     
     const q = quizQuestions[quizState.currentQuestionIndex];
-    const optionsHTML = q.options.map((opt, idx) => `
-        <button class="option-btn" onclick="selectQuizOption(${idx})" id="opt-${idx}">
-            ${idx + 1}. &nbsp; ${opt}
-        </button>
-    `).join('');
+    const previouslyAnsweredIdx = quizState.answers[quizState.currentQuestionIndex];
+    const isAlreadyAnswered = previouslyAnsweredIdx !== undefined && previouslyAnsweredIdx !== null;
+    
+    const optionsHTML = q.options.map((opt, idx) => {
+        let btnClass = "option-btn";
+        let disabledAttr = "";
+        
+        if (isAlreadyAnswered) {
+            disabledAttr = "disabled";
+            if (idx === q.answer) {
+                btnClass += " correct";
+            } else if (idx === previouslyAnsweredIdx) {
+                btnClass += " incorrect";
+            }
+        }
+        
+        return `
+            <button class="${btnClass}" ${disabledAttr} onclick="selectQuizOption(${idx})" id="opt-${idx}">
+                ${idx + 1}. &nbsp; ${opt}
+            </button>
+        `;
+    }).join('');
+    
+    const percent = Math.round((quizState.currentQuestionIndex / quizQuestions.length) * 100);
     
     box.innerHTML = `
         <div class="quiz-header">
             <h2>🗳️ Chunav Quiz Challenge</h2>
             <p>Showcase your democratic awareness!</p>
         </div>
+        
+        <div class="progress-section" style="margin-bottom: 15px;">
+            <div class="progress-header">
+                <span>Quiz Progress</span>
+                <span>${percent}% Complete</span>
+            </div>
+            <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width: ${percent}%"></div>
+            </div>
+        </div>
+
         <div class="quiz-question-box">
             <div class="question-meta">
                 <span>Question ${quizState.currentQuestionIndex + 1} of ${quizQuestions.length}</span>
-                <span style="color:var(--saffron)">Score: ${quizState.score}</span>
+                <span id="quiz-score-val" style="color:var(--saffron); font-weight: 700;">Score: ${quizState.score}</span>
             </div>
             <div class="question-text">${q.question}</div>
         </div>
+        
         <div class="quiz-options" id="quiz-options-container">
             ${optionsHTML}
         </div>
-        <div id="quiz-feedback-box" style="margin-top:15px; z-index:1; display:none;">
-            <!-- Triggered on click -->
+        
+        <div id="quiz-feedback-box" style="margin-top:15px; z-index:1; ${isAlreadyAnswered ? 'display:block;' : 'display:none;'}">
+            ${isAlreadyAnswered ? renderFeedbackHTML(previouslyAnsweredIdx === q.answer, q.explanation) : ''}
         </div>
     `;
+    
     lucide.createIcons();
 }
 
@@ -600,28 +703,30 @@ function selectQuizOption(selectedIdx) {
     }
     
     // Save selection
-    quizState.answers.push(selectedIdx);
+    quizState.answers[quizState.currentQuestionIndex] = selectedIdx;
+    
+    // Dynamically update the score display element in real-time
+    const scoreValEl = document.getElementById('quiz-score-val');
+    if (scoreValEl) {
+        scoreValEl.innerText = `Score: ${quizState.score}`;
+    }
+    
+    // Persist modified state to localStorage
+    localStorage.setItem('chunav_quiz_state', JSON.stringify(quizState));
+    
+    // Trigger gorgeous visual notification toast
+    showQuizToast(isCorrect ? "Correct Answer! +1 Point 🎉" : "Incorrect Answer ❌", isCorrect);
     
     // Display feedback & explanation
     feedbackBox.style.display = 'block';
-    feedbackBox.innerHTML = `
-        <div style="background:rgba(255,255,255,0.03); border:1px solid ${isCorrect ? 'var(--green)' : 'rgba(239, 68, 68, 0.4)'}; padding:15px; border-radius:16px; margin-bottom:12px;">
-            <div style="color:${isCorrect ? 'var(--green)' : '#ef4444'}; font-weight:700; font-size:0.95rem; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
-                <i data-lucide="${isCorrect ? 'check-circle-2' : 'alert-circle'}"></i>
-                ${isCorrect ? 'Correct Answer! Excellent!' : 'Oops, that is incorrect.'}
-            </div>
-            <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">${q.explanation}</p>
-        </div>
-        <button class="quiz-btn" style="width:100%" onclick="nextQuizQuestion()">
-            ${quizState.currentQuestionIndex + 1 === quizQuestions.length ? 'View Final Results 🏆' : 'Next Question ➡️'}
-        </button>
-    `;
+    feedbackBox.innerHTML = renderFeedbackHTML(isCorrect, q.explanation);
     
     lucide.createIcons();
 }
 
 function nextQuizQuestion() {
     quizState.currentQuestionIndex++;
+    localStorage.setItem('chunav_quiz_state', JSON.stringify(quizState));
     loadQuiz();
 }
 
@@ -676,6 +781,7 @@ function resetQuiz() {
         score: 0,
         answers: []
     };
+    localStorage.setItem('chunav_quiz_state', JSON.stringify(quizState));
     loadQuiz();
 }
 
