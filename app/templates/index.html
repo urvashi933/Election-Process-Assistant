@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Modern Secure Parser CDNs for AI Rich Content -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
 </head>
 <body>
     <div class="glass-container">
@@ -36,6 +39,11 @@
                             <i data-lucide="book-open" aria-hidden="true"></i> <span>Step Guide</span>
                         </button>
                     </li>
+                    <li>
+                        <button class="nav-item" onclick="switchTab('quiz')" aria-label="Switch to Democracy Quiz tab">
+                            <i data-lucide="award" aria-hidden="true"></i> <span>Chunav Quiz</span>
+                        </button>
+                    </li>
                 </ul>
             </nav>
 
@@ -49,18 +57,33 @@
 
         <main class="content" id="main-content" role="main">
             <header class="top-bar">
-                <h1>Election Assistant</h1>
+                <h1 id="main-title">Indian Election AI Guide</h1>
                 <div class="user-profile" aria-label="User Profile">Urvashi</div>
             </header>
 
             <section id="chat-tab" class="tab-content active" aria-labelledby="chat-heading">
                 <h2 id="chat-heading" class="sr-only">AI Chat Assistant</h2>
                 <div class="chat-messages" id="chat-box" role="log" aria-live="polite">
-                    <div class="message ai">
-                        <p>Namaste! I am your <strong>Chunav Guide</strong>. How can I help you participate in the world's largest democracy today?</p>
+                    <div class="message ai" role="article">
+                        <div class="message-text">
+                            <p>Namaste! I am your <strong>Chunav Guide</strong>. How can I help you participate in the world's largest democracy today?</p>
+                        </div>
+                        <div class="message-actions">
+                            <button class="msg-btn speak-btn" onclick="speakFirstMessage(this)" aria-label="Listen to message">
+                                <i data-lucide="volume-2"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
+                <!-- Horizontal Suggestion Chips Box -->
+                <div class="suggestion-container" id="suggestion-box">
+                    <span class="suggestion-title"><i data-lucide="sparkles" class="cyan-glow"></i> Try asking:</span>
+                    <div class="suggestion-chips" id="suggestion-chips">
+                        <!-- Loaded dynamically by script.js -->
+                    </div>
+                </div>
+
                 <form class="input-area" id="chat-form" onsubmit="event.preventDefault(); return false;">
                     <label for="user-input" class="sr-only">Ask a question about elections</label>
                     <input type="text" id="user-input" placeholder="Ask about Voter ID, Booths, or Dates..." aria-required="true">
@@ -81,13 +104,41 @@
                 <div class="guide-container" id="guide-list">
                 </div>
             </section>
+
+            <!-- New Gamified Chunav Quiz Tab -->
+            <section id="quiz-tab" class="tab-content" aria-labelledby="quiz-heading" style="display: none;">
+                <h2 id="quiz-heading" class="sr-only">Democracy Quiz</h2>
+                <div class="quiz-container" id="quiz-box">
+                    <!-- Populated dynamically by script.js -->
+                </div>
+            </section>
         </main>
     </div>
 
     <script src="/static/script.js"></script>
     <script>
-        // Refresh icons
+        // Refresh icons on startup
         lucide.createIcons();
+        
+        // Native Speak Helper for the static welcoming message
+        function speakFirstMessage(btn) {
+            const text = "Namaste! I am your Chunav Guide. How can I help you participate in the world's largest democracy today?";
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                btn.innerHTML = '<i data-lucide="volume-2"></i>';
+                lucide.createIcons();
+            } else {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'hi-IN'; // Uses Indian English/Hindi friendly synthesis
+                utterance.onend = () => {
+                    btn.innerHTML = '<i data-lucide="volume-2"></i>';
+                    lucide.createIcons();
+                };
+                window.speechSynthesis.speak(utterance);
+                btn.innerHTML = '<i data-lucide="square" class="stop-icon"></i>';
+                lucide.createIcons();
+            }
+        }
     </script>
 </body>
 </html>

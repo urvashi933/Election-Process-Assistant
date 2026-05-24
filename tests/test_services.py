@@ -13,15 +13,15 @@ def intent_service():
 
 def test_intent_detection(intent_service):
     """Test that the intent service correctly identifies election topics."""
-    # This assumes IntentService has a method 'detect_intent'
-    # Checking common keywords
-    assert intent_service.detect_intent("How do I get a voter ID?") == "registration"
-    assert intent_service.detect_intent("Where is my polling booth?") == "polling_booth"
-    assert intent_service.detect_intent("When is the election?") == "dates"
+    # Using the actual 'classify' method on IntentService
+    assert intent_service.classify("How do I get a voter ID?") == "registration"
+    assert intent_service.classify("Where is my polling booth?") == "polling"
+    assert intent_service.classify("When is the election?") == "timeline"
 
 @pytest.mark.asyncio
 async def test_gemini_service_initialization(gemini_service):
     """Test that Gemini service initializes correctly."""
+    gemini_service.api_key = "fake_api_key"
     with patch('google.generativeai.GenerativeModel') as mock_model:
         client = gemini_service._get_client()
         assert client is not None
@@ -34,7 +34,7 @@ async def test_gemini_generate_response_fallback(gemini_service):
     gemini_service._client = None
     response = await gemini_service.generate_response("hello", "general", {})
     assert "Namaste!" in response
-    assert "break" in response
+    assert "offline" in response
 
 def test_config_loading():
     """Test that configuration is loaded correctly."""
