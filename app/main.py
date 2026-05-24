@@ -1,10 +1,13 @@
-<<<<<<< HEAD
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from app.routes import chat_router, steps_router, timeline_router
 import logging
 import time
+import os
 from starlette.middleware.base import BaseHTTPMiddleware
 
 # -----------------------------
@@ -59,14 +62,29 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 app.add_middleware(SecurityHeadersMiddleware)
 
-# 5. Include API Routers
+# 5. Static Files & Templates
+# Mount the static directory for CSS, JS, and Images
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Initialize templates
+templates = Jinja2Templates(directory="app/templates")
+
+# 6. Include API Routers
 app.include_router(chat_router)
 app.include_router(steps_router)
 app.include_router(timeline_router)
 
-# 6. Health Check / Root Endpoint
-@app.get("/", tags=["system"])
-async def root():
+# 7. Frontend / UI Route
+@app.get("/", response_class=HTMLResponse, tags=["UI"])
+async def read_root(request: Request):
+    """
+    Serves the main interactive 'Chunav Guide' interface.
+    """
+    return templates.TemplateResponse("index.html", {"request": request})
+
+# 8. Health Check / Status Endpoint
+@app.get("/api/health", tags=["system"])
+async def health_check():
     """
     Service health check endpoint.
     """
@@ -77,18 +95,3 @@ async def root():
         "timestamp": time.time(),
         "message": "Welcome to the Chunav Guide API!"
     }
-=======
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-import os
-
-# 1. Mount your static files (CSS/JS)
-# Make sure your style.css and script.js are in a folder called 'static'
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-@app.get("/", response_class=HTMLResponse)
-async def read_root():
-    # This reads your index.html and sends it to the browser
-    with open(os.path.join("static", "index.html"), "r") as f:
-        return f.read()
->>>>>>> f7f47d9e9034be66f53bdbff7db0a6c59a84345f

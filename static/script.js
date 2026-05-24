@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 // Configuration: Use relative paths so it works on any host (Vercel, Docker, Local)
 const API_BASE = "/api";
-=======
-const API_URL = "https://election-process-assistant.vercel.app/api";
->>>>>>> f7f47d9e9034be66f53bdbff7db0a6c59a84345f
 
 // Initialize Lucide Icons
 lucide.createIcons();
@@ -79,13 +75,12 @@ async function sendMessage() {
         
         if (result.success) {
             appendMessage(result.data.response, 'ai');
-            // If there is structured data, we could render it here too
         } else {
             appendMessage("I'm sorry, I couldn't process that. " + (result.error || ""), 'ai');
         }
     } catch (error) {
         console.error("Chat error:", error);
-        appendMessage("Namaste! I'm having trouble connecting to my knowledge base. Is your internet active?", 'ai');
+        appendMessage("Namaste! I'm having trouble connecting to my knowledge base.", 'ai');
     } finally {
         sendBtn.disabled = false;
         sendBtn.innerHTML = '<i data-lucide="send"></i>';
@@ -138,7 +133,6 @@ async function loadTimeline() {
     }
 }
 
-<<<<<<< HEAD
 // Event Listeners
 if (chatForm) {
     chatForm.addEventListener('submit', (e) => {
@@ -158,7 +152,3 @@ userInput.addEventListener('keypress', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     switchTab('chat');
 });
-=======
-sendBtn.addEventListener('click', sendMessage);
-userInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
->>>>>>> f7f47d9e9034be66f53bdbff7db0a6c59a84345f
